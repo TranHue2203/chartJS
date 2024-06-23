@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart.js Donut Chart</title>
+    <style>
+        canvas {
+            background-color: #f3f3f3; /* Set your desired background color */
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</head>
+<body>
+  <div class="chart-donut" style="width: 350px;height: 250px;">
+    <p style="font-size: 20px; font-weight: 600;">Thống kê báo cáo</p>
+    <canvas id="myDonutChart" width="200" height="200"></canvas>
+    
+    <script>
+        // Plugin to set the chart background color
+        const chartBackgroundPlugin = {
+            id: 'chartBackgroundPlugin',
+            beforeDraw: function(chart) {
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.fillStyle = '#fff'; // Set your desired background color
+                ctx.fillRect(0, 0, chart.width, chart.height);
+                ctx.restore();
+            }
+        };
+
+        // Plugin to display text in the center of the donut chart
+        const centerTextPlugin = {
+            id: 'centerTextPlugin',
+            beforeDraw: function(chart) {
+                if (chart.config.options.elements.center) {
+                    var ctx = chart.ctx;
+                    var centerConfig = chart.config.options.elements.center;
+                    var fontStyle = centerConfig.fontStyle || 'Arial';
+                    var txt = centerConfig.text;
+                    var color = centerConfig.color || '#000';
+                    var maxFontSize = centerConfig.maxFontSize || 75;
+                    var sidePadding = centerConfig.sidePadding || 20;
+                    var sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2);
+                    
+                    // Start with a base font of 30px
+                    ctx.font = "30px " + fontStyle;
+                    
+                    // Get the width of the string
+                    var stringWidth = ctx.measureText(txt).width;
+                    
+                    // Calculate the width of the element minus side padding
+                    var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
+                    
+                    // Find out how much the font can grow in width.
+                    var widthRatio = elementWidth / stringWidth;
+                    var newFontSize = Math.floor(30 * widthRatio);
+                    var elementHeight = (chart.innerRadius * 2);
+                    
+                    // Pick a new font size so it will not be larger than the height of label.
+                    var fontSizeToUse = 16;
+                    
+                    // Set font settings to draw it correctly.
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
+                    var centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
+                    ctx.font = fontSizeToUse + "px " + fontStyle;
+                    ctx.fillStyle = color;
+                    
+                    // Draw text in center
+                    ctx.fillText(txt, centerX, centerY);
+                }
+            }
+        };
+
+        // Register the plugins
+        Chart.register(chartBackgroundPlugin, centerTextPlugin, ChartDataLabels);
+
+        // Data for the donut chart
+        var data = {
+            labels: ['Set-up', 'Vận hành', 'Tăng trưởng', 'Trưởng thành', 'IPO', 'Ý tưởng'],
+            datasets: [{
+                data: [5, 10, 15, 10, 20, 40],
+                backgroundColor: [
+                    '#2D9CDB',
+                    '#F8961E',
+                    '#034EA1',
+                    '#90BE6D',
+                    '#F3722C',
+                    '#F94144'
+                ],
+                hoverBackgroundColor: [
+                    '#2D9CDB',
+                    '#F8961E',
+                    '#034EA1',
+                    '#90BE6D',
+                    '#F3722C',
+                    '#F94144'
+                ],
+                hoverOffset: 5
+            }]
+        };
+
+        // Options for the donut chart
+        var options = {
+            elements: {
+                center: {
+                    text: '10.000 Tài khoản',
+                    color: '#000', // Default is #000000
+                    fontStyle: 'Arial', // Default is Arial
+                    sidePadding: 10, // Default is 20 (as a percentage)
+                    maxFontSize: 20,
+                    fontSizeToUse: 10,
+                }
+            },
+            cutout: '70%', // Adjust this to control the size of the hole in the donut
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right' // This is the key line to move the legend to the right
+                },
+                datalabels: {
+                    color: '#fff',
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value * 100 / sum).toFixed(1) + "%";
+                        return percentage;
+                    },
+                    font: {
+                        weight: '600',
+                    }
+                }
+            }
+        };
+
+        // Function to create the donut chart
+        function createDonutChart(ctx) {
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: options
+            });
+        }
+
+        // Get the context of the canvas element and create the chart
+        var ctx = document.getElementById('myDonutChart').getContext('2d');
+        createDonutChart(ctx);
+    </script>
+    </div>
+</body>
+</html>

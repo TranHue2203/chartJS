@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart.js Mix Chart</title>
+    <style>
+        canvas {
+            background-color: #f3f3f3; /* Set your desired background color */
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</head>
+<body>
+    <div class="chart-mix" style="width: 500px; height: 400px;">
+        <!-- Increased width to 800px -->
+        <p style="font-size: 20px; font-weight: 600;">Nội dung Talk Show / Sự Kiện</p>
+        <canvas id="myMixChart" width="500" height="400"></canvas>
+        <!-- Increased width to 800 -->
+    </div>
+
+    <script>
+        // Plugin to set the chart background color
+        const chartBackgroundPlugin = {
+            id: 'chartBackgroundPlugin',
+            beforeDraw: function(chart) {
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.fillStyle = '#fff'; // Set your desired background color
+                ctx.fillRect(0, 0, chart.width, chart.height);
+                ctx.restore();
+            }
+        };
+        Chart.register(chartBackgroundPlugin);
+
+        // Data for the mix chart
+        var data = {
+            labels: [
+                'Nội dung theo kiềng 3\nchân trong phát triển DN',
+                'Phổ cập chính sách',
+                'Nội dung chia\nsẻ của chuyên gia\nđầu ngành'
+            ],
+            datasets: [{
+                type: 'line',
+                label: 'Số lượng talk show',
+                data: [40, 140, 340],
+                fill: false,
+                borderColor: '#FC9A03'
+            },{
+                type: 'bar',
+                label: 'Lượt xem',
+                data: [50, 150, 350],
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: '#034EA1',
+                barThickness: 80 // Adjust the bar thickness here
+            }]
+        };
+
+        // Options for the mix chart
+        var options = {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom' // This is the key line to move the legend below the chart
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        maxRotation: 0, // Prevents label rotation
+                        autoSkip: false,
+                        maxTicksLimit: 10 // Limit number of labels
+                    }
+                }
+            }
+        };
+
+        // Function to create the mix chart
+        function createMixChart(ctx) {
+            new Chart(ctx, {
+                type: 'bar', // 'bar' is used because it's a mixed chart containing bars and lines
+                data: data,
+                options: options
+            });
+        }
+
+        // Get the context of the canvas element and create the chart
+        var ctx = document.getElementById('myMixChart').getContext('2d');
+        createMixChart(ctx);
+    </script>
+</body>
+</html>

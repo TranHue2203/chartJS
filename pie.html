@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart.js Pie Chart</title>
+    <style>
+        canvas {
+            background-color: #f3f3f3; /* Set your desired background color */
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</head>
+<body>
+    <div class="chart-pie" style="width: 300px;height: 300px;">
+        <p style="font-size: 20px; font-weight: 600;">Thống kê nhu cầu học tập</p>
+        <canvas id="myPieChart" width="200" height="200"></canvas>
+    </div>
+
+    <script>
+        // Plugin to set the chart background color
+        const chartBackgroundPlugin = {
+            id: 'chartBackgroundPlugin',
+            beforeDraw: function(chart) {
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.fillStyle = '#fff'; // Set your desired background color
+                ctx.fillRect(0, 0, chart.width, chart.height);
+                ctx.restore();
+            }
+        };
+        Chart.register(chartBackgroundPlugin, ChartDataLabels);
+
+        // Data for the pie chart
+        var data = {
+            labels: ['Set-up', 'Vận hành', 'Tăng trưởng'],
+            datasets: [{
+                data: [60, 30, 10],
+                backgroundColor: [
+                    '#F94144',
+                    '#32C997',
+                    '#034EA1'
+                ],
+                hoverBackgroundColor: [
+                    '#F94144',
+                    '#32C997',
+                    '#034EA1'
+                ],
+                hoverOffset: 5
+            }]
+        };
+
+        // Options for the pie chart
+        var options = {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom' // This is the key line to move the legend below the chart
+                },
+                datalabels: {
+                    color: '#fff',
+                    formatter: (value, context) => {
+                        return value + '%';
+                    },
+                    font: {
+                        weight: 'bold'
+                    }
+                }
+            }
+        };
+
+        // Function to create the pie chart
+        function createPieChart(ctx) {
+            new Chart(ctx, {
+                type: 'pie',
+                data: data,
+                options: options
+            });
+        }
+
+        // Get the context of the canvas element and create the chart
+        var ctx = document.getElementById('myPieChart').getContext('2d');
+        createPieChart(ctx);
+    </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart.js Line Chart</title>
+    <style>
+        canvas {
+            background-color: #f3f3f3; /* Set your desired background color */
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</head>
+<body>
+    <div class="chart-line" style="width: 400px;height: 400px;">
+        <p style="font-size: 20px; font-weight: 600; text-align: center;">Số giờ học trung bình 1 doanh nghiệp</p>
+        <canvas id="myLineChart" width="300" height="300"></canvas>
+    </div>
+
+    <script>
+        // Plugin to set the chart background color
+        const chartBackgroundPlugin = {
+            id: 'chartBackgroundPlugin',
+            beforeDraw: function(chart) {
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.fillStyle = '#fff'; // Set your desired background color
+                ctx.fillRect(0, 0, chart.width, chart.height);
+                ctx.restore();
+            }
+        };
+        Chart.register(chartBackgroundPlugin);
+
+
+        // Data for the line chart
+        var data = {
+            labels: ['1', '2', '3', '4', '5', '6', '7', '8','9', '10', '11' , '12'],
+            datasets: [
+                {
+                label: 'My Fourth dataset',
+                data: [10, 11, 25, 13, 20, 15, 25, 5, 16, 9, 60, 38],
+                backgroundColor:'#0019FF',
+                fill: true
+                }
+            ]
+        };
+
+        // Options for the line chart
+        var options = {
+            responsive: true,
+            scales: {
+                x: {
+                    stacked: true // Stack lines horizontally
+                }, 
+                y: {
+                    stacked: true
+                }
+            }
+        };
+
+        // Function to create the line chart
+        function createLineChart(ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: options
+            });
+        }
+
+        // Get the context of the canvas element and create the chart
+        var ctx = document.getElementById('myLineChart').getContext('2d');
+        createLineChart(ctx);
+    </script>
+</body>
+</html>
